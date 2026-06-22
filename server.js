@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.static(__dirname));
 app.use(express.json());
 
-const GROQ_API_KEY = "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"; 
+const apiKey = process.env.GROQ_API_KEY;
 
 const MONGO_URI = "mongodb+srv://odeyaneeman_db_user:odeya12345@cluster0.hdainjd.mongodb.net/trip_planner_db?retryWrites=true&w=majority&appName=Cluster0";
 mongoose.connect(MONGO_URI)
