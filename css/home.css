@@ -32,6 +32,44 @@ body {
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
+@media (max-width: 768px) {
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px; 
+        gap: 8px;
+    }
+
+    .logo {
+        font-size: 1.2rem;
+        flex-shrink: 0; 
+    }
+
+    .nav-controls {
+        display: flex;
+        flex-direction: row !important; 
+        align-items: center;
+        gap: 5px; 
+        flex-wrap: nowrap; 
+    }
+
+    .nav-btn {
+        padding: 6px 10px; 
+        font-size: 12px; 
+        white-space: nowrap; 
+        display: flex;
+        align-items: center;
+        gap: 4px; 
+        border-radius: 20px; 
+    }
+
+    .logout-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}
+
 .logo {
     font-size: 22px;
     font-weight: bold;
