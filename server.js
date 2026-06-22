@@ -17,7 +17,6 @@ mongoose.connect(MONGO_URI)
     .catch(err => console.error("שגיאה בחיבור ל-MongoDB:", err));
 
 
-// הגדרת הסכמות ומודלים 
 const userSchema = new mongoose.Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
@@ -35,6 +34,69 @@ const TripSchema = new mongoose.Schema({
 
 const Trip = mongoose.model('Trip', TripSchema);
 const User = mongoose.model('User', userSchema);
+
+
+app.post('/api/register', async (req, res) => {
+    const { firstName, lastName, email, username, password } = req.body;
+
+    if (!firstName || !lastName || !email || !username || !password) {
+        return res.status(400).json({ error: "נא למלא את כל השדות המבוקשים" });
+    }
+
+    try {
+        const userExists = await User.findOne({ username });
+        if (userExists) {
+            return res.status(400).json({ error: "שם המשתמש כבר תפוס, נסו שם אחר" });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = new User({
+            firstName,
+            lastName,
+            email,
+            username,
+            password: hashedPassword
+        });
+
+        await newUser.save();
+        console.log(`משתמש חדש נרשם בהצלחה: ${username}`);
+        res.status(201).json({ message: "ההרשמה בוצעה בהצלחה!" });
+
+    } catch (error) {
+        console.error("שגיאה בתהליך ההרשמה:", error);
+        res.status(500).json({ error: "שגיאת שרת פנימית בתהליך הרישום" });
+    }
+});
+
+
+// ראוט התחברות 
+app.post('/api/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ error: "נא למלא את כל השדות" });
+    }
+
+    try {
+        const user = await User.findOne({ username });
+        if (!user) {
+            return res.status(400).json({ error: "שם משתמש או סיסמה שגויים" });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ error: "שם משתמש או סיסמה שגויים" });
+        }
+
+        console.log(`משתמש התחבר בהצלחה: ${username}`);
+        res.json({ message: "התחברת בהצלחה!", username: user.username });
+
+    } catch (error) {
+        console.error("שגיאה בתהליך ההתחברות:", error);
+        res.status(500).json({ error: "שגיאת שרת פנימית" });
+    }
+});
 
 
 app.post('/api/generate-trip', async (req, res) => {
@@ -118,7 +180,7 @@ app.post('/api/generate-trip', async (req, res) => {
             if (finalItinerary && username && region) {
                 const newTrip = new Trip({ username, region, itinerary: finalItinerary });
                 await newTrip.save();
-                console.log(`✨ הטיול של ${username} נשמר בהצלחה ב-MongoDB בסיום הסטרים!`);
+                console.log(` הטיול של ${username} נשמר בהצלחה ב-MongoDB בסיום הסטרים!`);
             }
         } catch (dbError) {
             console.error("שגיאה בשמירת הטיול ל-MongoDB:", dbError);
@@ -156,42 +218,12 @@ app.delete('/api/my-trips/:username', async (req, res) => {
 });
 
 
-// ראוט התחברות 
-app.post('/api/login', async (req, res) => {
-    const { username, password } = req.body;
-
-    if (!username || !password) {
-        return res.status(400).json({ error: "נא למלא את כל השדות" });
-    }
-
-    try {
-        const user = await User.findOne({ username });
-        if (!user) {
-            return res.status(400).json({ error: "שם משתמש או סיסמה שגויים" });
-        }
-
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ error: "שם משתמש או סיסמה שגויים" });
-        }
-
-        console.log(`משתמש התחבר בהצלחה: ${username}`);
-        res.json({ message: "התחברת בהצלחה!", username: user.username });
-
-    } catch (error) {
-        console.error("שגיאה בתהליך ההתחברות:", error);
-        res.status(500).json({ error: "שגיאת שרת פנימית" });
-    }
-});
-
-
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html')); 
 });
 
 
-// אתחול האזנה לפורט
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
