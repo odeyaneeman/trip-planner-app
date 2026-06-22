@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trip Planner AI - מסך הבית</title>
+    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo"> TripPlanner</div>
+        <div class="nav-controls">            <button id="theme-toggle" class="nav-btn"><i class="fa-solid fa-moon"></i></button>
+            <button id="history-toggle" class="nav-btn">
+    <i class="fa-solid fa-clock-rotate-left"></i> הטיולים שלי</button>
+            <button id="logout-btn" class="nav-btn logout-btn">
+    <i class="fa-solid fa-right-from-bracket"></i> התנתק</button>
+        </div>
+    </header>
+
+    <main class="home-wrapper">
+        
+        <section class="hero-section">
+<h2 id="welcome-user">טוען פרופיל משתמש...</h2>
+            <p>בחר/י את ההעדפות שלך ואנחנו נרכיב לך את המסלול המושלם בשניות</p>
+        </section>
+
+        <section class="form-container">
+            <form id="trip-parameters-form">
+                
+                <div class="form-row">
+                    <div class="input-field">
+                        <label><i class="fa-solid fa-map-location-dot"></i> אזור בארץ</label>
+                        <select id="region" required>
+                            <option value="" disabled selected>לאן בארץ?</option>
+                            <option value="צפון והגליל">צפון והגליל</option>
+                            <option value="מרכז וגוש דן">מרכז וגוש דן</option>
+                            <option value="דרום והנגב">דרום והנגב</option>
+                            <option value="ירושלים והסביבה">ירושלים והסביבה</option>
+                        </select>
+                    </div>
+
+                    <div class="input-field">
+                        <label><i class="fa-solid fa-person-hiking"></i> סגנון טיול</label>
+                        <select id="trip-style" required>
+                            <option value="" disabled selected>מה הזרימה שלכם?</option>
+                            <option value="טבע ומעיינות">טבע ומעיינות</option>
+                            <option value="עירוני ותרבות">עירוני ותרבות</option>
+                            <option value="אקסטרים ואתגרים">אקסטרים ואתגרים</option>
+                            <option value="בטן-גב ורוגע">בטן-גב ורוגע</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-field">
+                        <label><i class="fa-solid fa-gauge-simple-high"></i> רמת קושי</label>
+                        <select id="difficulty" required>
+                            <option value="קל (מתאים למשפחות)">קל (מתאים למשפחות)</option>
+                            <option value="בינוני (למיטיבי לכת לייט)" selected>בינוני (למיטיבי לכת לייט)</option>
+                            <option value="קשה (למקצוענים ואתגרי)">קשה (למקצוענים ואתגרי)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-field">
+                        <label><i class="fa-solid fa-wallet"></i> תקציב משוער</label>
+                        <select id="budget" required>
+                            <option value="לואו קוסט (חינמי / זול)">לואו קוסט (חינמי / זול)</option>
+                            <option value="ממוצע (סביר והגיוני)" selected>ממוצע (סביר והגיוני)</option>
+                            <option value="פינוק (אטרקציות ומסעדות)">פינוק (אטרקציות ומסעדות)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-field">
+                        <label><i class="fa-solid fa-cloud-sun"></i> התאמה למזג אוויר</label>
+                        <select id="weather" required>
+                            <option value="מתאים לכל מזג אוויר">מתאים לכל מזג אוויר</option>
+                            <option value="יום שמש חם (מוצל/מים)">יום שמש חם (מוצל/מים)</option>
+                            <option value="יום קריר / חורפי (מקורה)">יום קריר / חורפי (מקורה)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="button-row">
+                    <button type="submit" id="generate-btn" class="main-generate-btn">
+                         תכנן לי מסלול</button>
+                </div>
+
+            </form>
+        </section>
+
+        <section id="results-section" class="results-container">
+            
+            <div id="map-box" class="result-card map-box">
+                <div class="placeholder-content">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    <h3>המפה שלכם 🌍</h3>
+                    <p>כאן תוצג מפה אינטראקטיבית עם נקודות העצירה במסלול.</p>
+                </div>
+            </div>
+
+            <div id="itinerary-box" class="result-card itinerary-box">
+                <div class="placeholder-content">
+                    <h3>המסלול המתוכנן </h3>
+                    <p> מחכים שתבחרו פרמטרים ותלחצו על הכפתור כדי להרכיב את הלו"ז</p>
+                </div>
+            </div>
+
+        </section>
+    </main>
+    <script src="js/home.js"></script>
+
+    <button class="emergency-float-btn" id="emergency-btn" title="מספרי חירום ומידע בטיחות 🚑">
+    <i class="fa-solid fa-kit-medical"></i>
+</button>
+
+
+        
+        <div class="emergency-widget-container">
+    <div class="widget-popup emergency-popup" id="emergency-popup">
+        <h4 style="color: #d32f2f;"> מוקדי חירום ובטיחות</h4>
+        <div class="widget-text" style="font-size: 13px; line-height: 1.5;">
+            <strong>מספרי חירום:</strong><br>
+            📞 מד"א: <a  style="color:#d32f2f; font-weight:bold;">101</a> | 
+            📞 משטרה: <a  style="color:#d32f2f; font-weight:bold;">100</a><br>
+            📞 כיבוי: <a  style="color:#d32f2f; font-weight:bold;">102</a> | 
+            📞 הצלה: <a  style="color:#d32f2f; font-weight:bold;">1221</a>
+            <hr style="border:0; height:1px; background:#eee; margin: 10px 0;">
+            <strong>חוקי ברזל אם הלכתם לאיבוד:</strong>
+            <ul style="padding-right: 15px; margin: 5px 0 0 0;">
+                <li>תישארו במקום (קל יותר למצוא אתכם).</li>
+                <li>כבו אינטרנט כדי לחסוך בסוללה לחירום.</li>
+                <li>חפשו צל ושתו מים במנות קטנות.</li>
+            </ul>
+        </div>
+    </div>
+    <button class="emergency-btn" id="emergency-trigger-btn">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+    </button>
+</div>
+
+
+ <div class="spontaneous-container">
+    <div class="widget-popup spontaneous-popup" id="spontaneous-popup">
+        <h4> טיול בהפתעה!</h4>
+        <div class="widget-text">לא מצליחים לבחור? אנחנו נגריל לכם שילוב משוגע לטיול המושלם.</div>
+        <button class="widget-next-btn run-spontaneous-btn" id="run-spontaneous-btn">לחץ עליי! </button>
+    </div>
+    <button class="spontaneous-btn" id="spontaneous-trigger-btn" >
+        <i class="fa-solid fa-dice"></i>
+    </button>
+</div>
+
+
+    <div class="travel-widget-container">
+    <div class="widget-popup" id="travel-widget-popup">
+        <h4 id="widget-title">🎒 מה אסור לשכוח?</h4>
+        <div class="widget-text" id="widget-text-content">טוען טיפ בשבילך...</div>
+        <button class="widget-next-btn" id="widget-next-btn">תן לי עוד אחד! </button>
+    </div>
+    <button class="widget-trigger-btn" id="travel-widget-btn">
+        <i class="fa-solid fa-lightbulb"></i> </button>
+</div>
+
+
+<div id="history-modal" class="history-modal-overlay">
+    <div class="history-modal-content">
+        <span id="close-modal-btn" class="modal-close-btn">&times;</span>
+        
+        <h3>
+            <i class="fa-solid fa-clock-rotate-left"></i> הטיולים השמורים שלי
+        </h3>
+        
+        <ul id="trips-list" class="history-trips-list">
+            </ul>
+    </div>
+</div>
+
+</body>
+</html>

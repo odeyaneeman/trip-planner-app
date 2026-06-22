@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הרשמה למערכת</title>
+    <link rel="stylesheet" href="css/register.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo"> TripPlanner</div>
+        </div>
+    </header>
+
+    <div class="main-wrapper">
+        
+        <div class="register-container">
+            
+            <form id="register-form">
+
+                <div class="input-group">
+                    <input type="text" id="firstname" placeholder="שם פרטי" required>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="lastname" placeholder="שם משפחה" required>
+                </div>
+
+                <div class="input-group">
+                    <input type="email" id="email" placeholder="אימייל" required>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="username" placeholder=" שם משתמש" required>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="register-password" placeholder="סיסמה (לפחות 6 תווים)" required>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="confirm-password" placeholder="אימות סיסמה" required>
+                </div>
+
+                <button type="submit" class="register-button">הרשמה</button>
+            </form>
+
+        </div> <div class="login-link-container">
+            <p>כבר יש לך חשבון?</p>
+            <a href="login.html" class="login-link">התחברות</a>
+        </div>
+
+    </div> <script src="js/register.js"></script>
+</body>
+
+</html>

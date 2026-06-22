@@ -1,0 +1,117 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f3da;
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    min-height: 100vh; 
+    width: 100%;
+    padding-top: 80px;
+}
+.navbar {
+    position: fixed;   
+    top: 0;
+    left: 0;
+    width: 100%;   
+    box-sizing: border-box; 
+        background-color: white;
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    padding: 15px 30px; 
+    z-index: 1000;    
+}
+
+
+[data-theme="dark"] .navbar {
+    background-color: #262e23; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: #2c3e50;
+    transition: color 0.3s ease;
+}
+
+[data-theme="dark"] .logo {
+    color: #f5f3da;
+}
+
+
+.main-wrapper {
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    width: 100%;
+    max-width: 360px; 
+    padding: 20px;
+}
+
+.register-container {
+    background-color: white;
+    padding: 35px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    text-align: right;
+}
+
+.input-group {
+    margin-bottom: 15px; 
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.register-button {
+    width: 100%;
+    background-color: #f1c152;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 10px;
+}
+
+.register-button:hover {
+    background-color: #cb8e14;
+}
+
+.login-link-container {
+    margin-top: 25px; 
+    text-align: center;
+    color: #7f8c8d;
+    font-size: 15px;
+}
+
+.login-link-container p {
+    margin-bottom: 5px;
+}
+
+.login-link {
+    color: #27ae60;
+    text-decoration: underline; 
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.login-link:hover {
+    color: #219653;
+}
