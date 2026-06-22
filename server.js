@@ -2,10 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const path = require('path'); 
 
 const app = express();
 app.use(cors());
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname))); 
 app.use(express.json());
 
 const apiKey = process.env.GROQ_API_KEY;
@@ -49,7 +50,7 @@ app.post('/api/generate-trip', async (req, res) => {
         const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${GROQ_API_KEY}`,
+                "Authorization": `Bearer ${apiKey}`, 
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
@@ -132,7 +133,6 @@ app.post('/api/generate-trip', async (req, res) => {
 });
 
 
-// ראוט להיסטורית הטיולים
 app.get('/api/my-trips/:username', async (req, res) => {
     try {
         const username = req.params.username;
@@ -144,7 +144,6 @@ app.get('/api/my-trips/:username', async (req, res) => {
 });
 
 
-// ראוט למחיקת כל היסטוריית הטיולים של משתמש
 app.delete('/api/my-trips/:username', async (req, res) => {
     const { username } = req.params;
     try {
@@ -185,9 +184,9 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-const path = require('path');
+
 app.get('/', (req, res) => {
-res.sendFile(path.join(__dirname, 'home.html'));
+    res.sendFile(path.join(__dirname, 'home.html')); 
 });
 
 
