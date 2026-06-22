@@ -37,36 +37,31 @@ body {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 15px; 
-        gap: 8px;
+        padding: 8px 10px; 
+        gap: 5px; 
     }
 
     .logo {
-        font-size: 1.2rem;
-        flex-shrink: 0; 
+        font-size: 1.1rem; 
+        flex-shrink: 0;
     }
 
     .nav-controls {
         display: flex;
-        flex-direction: row !important; 
+        flex-direction: row !important;
         align-items: center;
-        gap: 5px; 
-        flex-wrap: nowrap; 
+        gap: 4px; 
+        flex-wrap: nowrap;
     }
 
     .nav-btn {
-        padding: 6px 10px; 
-        font-size: 12px; 
-        white-space: nowrap; 
+        padding: 5px 8px; 
+        font-size: 10.5px; 
+        white-space: nowrap;
         display: flex;
         align-items: center;
-        gap: 4px; 
-        border-radius: 20px; 
-    }
-
-    .logout-btn {
-        padding: 6px 10px;
-        font-size: 12px;
+        gap: 3px; 
+        border-radius: 15px; 
     }
 }
 
