@@ -41,8 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch('/api/register', {
-                method: 'POST',
+const response = await fetch('https://trip-planner-app-jq9d.onrender.com/api/register', {
+                    method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ firstName, lastName, email, username, password })
             });

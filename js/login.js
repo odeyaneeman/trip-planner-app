@@ -16,8 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = passwordInput.value.trim();
 
         try {
-            const response = await fetch('/api/login', {
-                method: 'POST',
+const response = await fetch('https://trip-planner-app-jq9d.onrender.com/api/login', {                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password })
             });
