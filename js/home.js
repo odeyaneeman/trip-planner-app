@@ -48,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // כפתור התנתקות 
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
@@ -222,7 +221,7 @@ async function loadUserTrips() {
     if (!username) return;
 
     try {
-        const response = await fetch(`http://localhost:3000/api/my-trips/${username}`);
+        const response = await fetch(`/api/my-trips/${username}`);
         const trips = await response.json();
         const list = document.getElementById('trips-list');
         
@@ -307,7 +306,7 @@ async function loadUserTrips() {
 
             document.getElementById('confirm-yes').addEventListener('click', async () => {
                 try {
-                    const deleteResponse = await fetch(`http://localhost:3000/api/my-trips/${username}`, {
+                    const deleteResponse = await fetch(`/api/my-trips/${username}`, {
                         method: 'DELETE'
                     });
                     
@@ -491,7 +490,7 @@ document.getElementById('trip-parameters-form').addEventListener('submit', async
     
     try {
         console.log("פונה לשרת ה-Backend המאובטח בסטרימינג...");
-        const response = await fetch("http://localhost:3000/api/generate-trip", {
+        const response = await fetch("/api/generate-trip", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ 

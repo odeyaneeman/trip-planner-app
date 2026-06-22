@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch('http://localhost:3000/api/register', {
+            const response = await fetch('/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ firstName, lastName, email, username, password })
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("שגיאה בהתחברות לשרת:", error);
             Swal.fire({
                 title: 'שגיאת תקשורת',
-                text: 'לא ניתן להתחבר לשרת כרגע. ודאי שהוא רץ בטרמינל.',
+                text: 'לא ניתן להתחבר לשרת כרגע.',
                 icon: 'error',
                 confirmButtonText: 'סגור'
             });
