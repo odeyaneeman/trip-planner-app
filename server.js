@@ -2,11 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const path = require('path'); 
+const path = require('path');
 
 const app = express();
 app.use(cors());
-app.use(express.static(path.join(__dirname))); 
+app.use(express.static(path.join(__dirname)));
 app.use(express.json());
 
 const apiKey = process.env.GROQ_API_KEY;
@@ -15,7 +15,6 @@ const MONGO_URI = "mongodb+srv://odeyaneeman_db_user:odeya12345@cluster0.hdainjd
 mongoose.connect(MONGO_URI)
     .then(() => console.log("מחובר בהצלחה לבסיס הנתונים MongoDB!"))
     .catch(err => console.error("שגיאה בחיבור ל-MongoDB:", err));
-
 
 const userSchema = new mongoose.Schema({
     firstName: { type: String, required: true },
@@ -26,31 +25,26 @@ const userSchema = new mongoose.Schema({
 });
 
 const TripSchema = new mongoose.Schema({
-    username: { type: String, required: true }, 
-    region: { type: String, required: true },    
-    itinerary: { type: String, required: true }, 
-    createdAt: { type: Date, default: Date.now }  
+    username: { type: String, required: true },
+    region: { type: String, required: true },
+    itinerary: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
 });
 
 const Trip = mongoose.model('Trip', TripSchema);
 const User = mongoose.model('User', userSchema);
 
-
 app.post('/api/register', async (req, res) => {
     const { firstName, lastName, email, username, password } = req.body;
-
     if (!firstName || !lastName || !email || !username || !password) {
         return res.status(400).json({ error: "נא למלא את כל השדות המבוקשים" });
     }
-
     try {
         const userExists = await User.findOne({ username });
         if (userExists) {
             return res.status(400).json({ error: "שם המשתמש כבר תפוס, נסו שם אחר" });
         }
-
         const hashedPassword = await bcrypt.hash(password, 10);
-
         const newUser = new User({
             firstName,
             lastName,
@@ -58,67 +52,51 @@ app.post('/api/register', async (req, res) => {
             username,
             password: hashedPassword
         });
-
         await newUser.save();
-        console.log(`משתמש חדש נרשם בהצלחה: ${username}`);
         res.status(201).json({ message: "ההרשמה בוצעה בהצלחה!" });
-
     } catch (error) {
-        console.error("שגיאה בתהליך ההרשמה:", error);
         res.status(500).json({ error: "שגיאת שרת פנימית בתהליך הרישום" });
     }
 });
 
-
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
-
     if (!username || !password) {
         return res.status(400).json({ error: "נא למלא את כל השדות" });
     }
-
     try {
         const user = await User.findOne({ username });
         if (!user) {
             return res.status(400).json({ error: "שם משתמש או סיסמה שגויים" });
         }
-
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ error: "שם משתמש או סיסמה שגויים" });
         }
-
-        console.log(`משתמש התחבר בהצלחה: ${username}`);
         res.json({ message: "התחברת בהצלחה!", username: user.username });
-
     } catch (error) {
-        console.error("שגיאה בתהליך ההתחברות:", error);
         res.status(500).json({ error: "שגיאת שרת פנימית" });
     }
 });
 
-
 app.post('/api/generate-trip', async (req, res) => {
     const { prompt, username, region } = req.body;
-
     if (!prompt) {
         return res.status(400).json({ error: "No prompt provided" });
     }
 
     try {
-        console.log(`מנסה לשלוח בקשה בזרם ל-Groq עבור המשתמש ${username || 'אורח'}...`);
-        
         const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${apiKey}`, 
+                "Authorization": `Bearer ${apiKey}`,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
                 model: "llama-3.3-70b-versatile",
                 messages: [
-                    { 
-                        role: "system", 
+                    {
+                        role: "system",
                         content: `אתה מדריך טיולים מומחה בישראל. תבנה תוכנית טיול יומית קצרה וברורה.
 חוקים נוקשים לתשובה:
 1. שפה קלילה ונעימה בגובה העיניים. בלי סלנג ובלי אימוג'ים בכלל.
@@ -126,15 +104,15 @@ app.post('/api/generate-trip', async (req, res) => {
 3. תתחיל ישר מהלו"ז עצמו (למשל: 09:00 - ...). בלי הקדמות רובוטיות.
 4. חוק התאמה קשיחה לפי בחירת האזור:
 - אם האזור הוא מרכז או גוש דן: תחזיר מסלול המבוסס אך ורק על המיקומים: פארק הירקון, מוזיאון ארץ ישראל, טיילת תל אביב, שוק הכרמל. השורה האחרונה בתשובה חייבת להיות בדיוק: מיקומים למפה: פארק הירקון, מוזיאון ארץ ישראל, טיילת תל אביב, שוק הכרמל
-- אם האזור הוא צפון: תחזיר מסלול המבוסס אך ורק על המיקומים: אגמון החולה, חורשת טל, תל דן. השורה האחרונה בתשובה חייבת להיות בדיוק: מיקומים למפה: אגמון החולה, חורשת טל, שמורת טבע תל דן
-- אם האזור הוא דרום: תחזיר מסלול המבוסס אך ורק על המיקומים: נחל בוקק, מצדה, עין גדי. השורה האחרונה בתשובה חייבת להיות בדיוק: מיקומים למפה: נחל בוקק, מצדה, עין גדי
+- אם האזור הוא צפון: תחזיר מסלול המבוסס אך ורק על המיקומים: אגמון החולה, גן לאומי חורשת טל, שמורת טבע תל דן. השורה האחרונה בתשובה חייבת להיות בדיוק: מיקומים למפה: אגמון החולה, גן לאומי חורשת טל, שמורת טבע תל דן
+- אם האזור הוא דרום: תחזיר מסלול המבוסס אך ורק על המיקומים: נחל בוקק, גן לאומי מצדה, שמורת עין גדי. השורה האחרונה בתשובה חייבת להיות בדיוק: מיקומים למפה: נחל בוקק, גן לאומי מצדה, שמורת עין גדי
 
 5. חובה מוחלטת: בשורה האחרונה ממש של התשובה, רשום את כותרת המפה המדויקת והמיקומים מופרדים בפסיקים כפי שהוגדר לעיל.`
                     },
-                    { role: "user", content: prompt } 
+                    { role: "user", content: prompt }
                 ],
                 temperature: 0.1,
-                stream: true 
+                stream: true
             })
         });
 
@@ -154,14 +132,11 @@ app.post('/api/generate-trip', async (req, res) => {
         while (true) {
             const { done, value } = await reader.read();
             if (done) break;
-
             const chunk = decoder.decode(value, { stream: true });
-            res.write(chunk); 
-
+            res.write(chunk);
             fullText += chunk;
         }
-
-        res.end(); 
+        res.end();
 
         try {
             const lines = fullText.split('\n').filter(line => line.trim() !== '');
@@ -180,7 +155,6 @@ app.post('/api/generate-trip', async (req, res) => {
             if (finalItinerary && username && region) {
                 const newTrip = new Trip({ username, region, itinerary: finalItinerary });
                 await newTrip.save();
-                console.log(`הטיול של ${username} נשמר בהצלחה ב-MongoDB בסיום הסטרים!`);
             }
         } catch (dbError) {
             console.error("שגיאה בשמירת הטיול ל-MongoDB:", dbError);
@@ -194,7 +168,6 @@ app.post('/api/generate-trip', async (req, res) => {
     }
 });
 
-
 app.get('/api/my-trips/:username', async (req, res) => {
     try {
         const username = req.params.username;
@@ -205,23 +178,19 @@ app.get('/api/my-trips/:username', async (req, res) => {
     }
 });
 
-
 app.delete('/api/my-trips/:username', async (req, res) => {
     const { username } = req.params;
     try {
-        await Trip.deleteMany({ username: username }); 
+        await Trip.deleteMany({ username: username });
         res.status(200).json({ message: "היסטוריית הטיולים נמחקה בהצלחה" });
     } catch (error) {
-        console.error("שגיאה במחיקת היסטוריה מהשרת:", error);
         res.status(500).json({ error: "שגיאה פנימית בשרת" });
     }
 });
 
-
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'login.html')); 
+    res.sendFile(path.join(__dirname, 'login.html'));
 });
-
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
